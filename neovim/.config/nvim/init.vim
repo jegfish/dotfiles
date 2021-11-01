@@ -54,12 +54,18 @@ let g:vimwiki_key_mappings = {}
 let g:vimwiki_key_mappings.table_mappings = 0
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/jgf-snippets']
 
-nnoremap gb :ls<CR>:b<Space>
-
 " In order to work needs to be called after *something*, don't know what.
 " So I'll just put it near the bottom.
 highlight RedundantSpaces ctermbg=red guibg=red
 match RedundantSpaces /\s\+$/
 
+highlight TrailingNewlines ctermbg=red guibg=red
+match TrailingNewLines /\n\+\%$/
+
 " Section: Filetype settings
 autocmd FileType vimwiki setlocal tw=80
+
+" Section: Key binds
+nnoremap gb :ls<CR>:b<Space>
+" Remove trailing newlines at end of file
+nnoremap <F5> :%s/\n*\%$//<CR>
