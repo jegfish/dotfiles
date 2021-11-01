@@ -1,0 +1,77 @@
+#+TITLE: Emacs Literate Configuration
+#+AUTHOR: Jeffrey Fisher
+#+PROPERTY: header-args :tangle yes
+
+* Configuration
+** Initialization
+*** Put "Custom" settings in their own file
+    This avoids polluting `init.el`.
+    #+begin_src emacs-lisp
+    (setq custom-file "~/.emacs.d/custom.el")
+    (when (file-exists-p custom-file)
+      (load custom-file))
+    #+end_src
+*** Initialize use-package
+  #+begin_src emacs-lisp
+    (require 'package)
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+
+    (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
+    (eval-when-compile
+      (require 'use-package))
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t)
+  #+end_src
+** Theme
+   #+begin_src emacs-lisp
+     (use-package doom-themes
+       :config
+       (load-theme 'doom-monokai-machine t))
+   #+end_src
+** evil-mode
+   #+begin_src emacs-lisp :tangle no
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil) ; necessary for evil-collection
+    (setq evil-want-integration t) ; necessary for evil-collection
+    :config
+    (evil-mode t)
+    ; https://stackoverflow.com/a/23715631
+    (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+    (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
+    (define-key evil-insert-state-map (kbd "C-u")
+      (lambda ()
+	(interactive)
+	(evil-delete (point-at-bol) (point))))
+
+    (use-package evil-collection
+      :config
+      (evil-collection-init)))
+    #+end_src
+** org-mode
+    #+begin_src emacs-lisp
+    (use-package org
+	:init
+	(setq org-todo-keywords
+	'((sequence "TODO" "|" "DONE" "DELEGATED")))
+	(setq org-directory "~/Documents/org/")
+	(setq org-agenda-files '("todo.org")))
+    #+end_src
+*** Indentation
+**** Enable org-indent-mode
+    #+begin_src emacs-lisp
+    (setq org-adapt-indentation 1) ; enable indentation
+    #+end_src
+**** Special indentation for source code blocks
+    Indentation in code blocks matches the language for the code block.
+    #+begin_src emacs-lisp
+    (setq org-src-tab-acts-natively t)
+    #+end_src
+
+*** Hide leading stars
+    #+begin_src emacs-lisp
+    (setq org-hide-leading-stars t)
+    #+end_src
